@@ -193,7 +193,7 @@ int main()
 {
     /* Example: Render barcode for "CODE39" */
     ST7735S_Init();
-    setOrientation(R90);
+    setOrientation(R0);
     fillScreen();
     flushBuffer();
     const char *data = "CODE39";
