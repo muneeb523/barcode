@@ -140,7 +140,7 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
     setColor(0, 0, 0);         /* Black for bars */
     setbgColor(255, 255, 255); /* White background */
     fillScreen();              /* Clear screen to white */
-    pritnf("Done setting up things\n");
+    printf("Done setting up things\n");
     uint16_t x = x_start; /* Current x position */
 
     /* Draw start character (*) */
@@ -185,7 +185,7 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
     }
 
     flushBuffer(); /* Update display */
-    print("buffer flushed\n");
+    printf("buffer flushed\n");
     return 0;      /* Success */
 }
 
