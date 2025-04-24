@@ -127,8 +127,8 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
 
         /* Option 2: Scale down (uncomment to enable) */
 
-        narrow_width = 2;
-        wide_width = 4;
+        narrow_width = 1;
+        wide_width = 2;
         total_width = calculate_barcode_width(input, narrow_width, wide_width);
         if (total_width + x_start > 160)
         {
