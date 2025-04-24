@@ -1,6 +1,6 @@
 ﻿#include <stdint.h>
 #include <string.h>
-
+#include <iostream>
 extern "C"
 {
 #include "../appgpio.h"
