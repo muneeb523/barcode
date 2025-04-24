@@ -183,6 +183,12 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
         }
         x += width;
     }
+    
+    setColor(31, 63, 31); // Green text
+    setbgColor(0, 0, 0);  // Black background
+    setFont(ter_u12b);    // Smallest readable font
+    printf("Displayed Time on Screen: %s\n", currentTime.c_str());
+    drawText(25, 35, "hi");
 
     flushBuffer(); /* Update display */
     printf("buffer flushed\n");
