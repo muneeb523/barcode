@@ -137,8 +137,8 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
     }
 
     /* Set colors: black for bars, white for background */
-    setColor(0, 0, 0);         /* Black for bars */
-    setbgColor(255, 255, 255); /* White background */
+    setColor(255, 255, 255);         /* Black for bars */
+    setbgColor(0, 0, 0); /* White background */
     fillScreen();              /* Clear screen to white */
     printf("Done setting up things\n");
     uint16_t x = x_start; /* Current x position */
@@ -184,10 +184,7 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
         x += width;
     }
 
-    setColor(31, 63, 31); // Green text
-    setbgColor(0, 0, 0);  // Black background
-    setFont(ter_u12b);    // Smallest readable font
-    drawText(25, 35, "hi");
+  
 
     flushBuffer(); /* Update display */
     return 0;      /* Success */
