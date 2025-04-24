@@ -18,7 +18,7 @@ void drawUI()
 
 
     // Draw mode image at fixed position
-    drawImage(0, 0, barcode,160 ,80 );
+    drawImage(0, 0, T001,140 ,60 );
 
     flushBuffer();
 }
