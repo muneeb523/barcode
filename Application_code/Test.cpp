@@ -39,15 +39,28 @@ bool loadBarcodeImage(const char *path, uint16_t *buffer, size_t size)
 
 void drawUI()
 {
-
     uint16_t barcode[IMAGE_SIZE];
     setColor(0, 0, 0); // Black background
 
     if (loadBarcodeImage("/root/image.raw", barcode, IMAGE_SIZE))
     {
+        // Print the barcode array values
+        std::cout << "Barcode image data (in RGB565 format):\n";
+        for (int i = 0; i < IMAGE_SIZE; ++i)
+        {
+            // Print the value in hexadecimal format (RGB565)
+            std::cout << "0x" << std::hex << barcode[i] << " ";
+
+            // Optionally, print a newline every 16 values for readability
+            if ((i + 1) % 16 == 0)
+                std::cout << std::endl;
+        }
+        std::cout << std::dec << std::endl;  // Reset to decimal format for other prints
+
         // Draw mode image at fixed position
         drawImage(0, 0, barcode, 140, 60);
     }
+
     flushBuffer();
 }
 
