@@ -28,7 +28,7 @@ int main()
 {
     /* Example: Render barcode for "CODE39" */
     ST7735S_Init();
-    setOrientation(R0);
+    setOrientation(R180);
     fillScreen();
     flushBuffer();
      drawUI();
