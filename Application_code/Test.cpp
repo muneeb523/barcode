@@ -123,8 +123,7 @@ int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, u
     uint16_t total_width = calculate_barcode_width(input, narrow_width, wide_width);
     if (total_width + x_start > 160)
     {
-        /* Option 1: Abort if too wide */
-        return -2; /* Overflow error */
+    
 
         /* Option 2: Scale down (uncomment to enable) */
 
@@ -200,11 +199,11 @@ int main()
     int result = draw_code39_barcode(data, 10, 10, 60); /* Start at (10,10), height=60 pixels */
     if (result == -1)
     {
-        /* Handle invalid character (e.g., draw error message) */
+        std::cout << "failed here" << std::endl;
     }
     else if (result == -2)
     {
-        /* Handle overflow (e.g., draw error message) */
+        std::cout << "FAiled here" << std::endl;
     }
     return 0;
 }
