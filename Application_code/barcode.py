@@ -48,22 +48,24 @@ def save_as_rgb565_raw(image_path, output_raw_file):
             for x in range(width):
                 r, g, b = pixels[y, x]
                 rgb565 = rgb888_to_rgb565(r, g, b)
-                f.write(int(rgb565).to_bytes(2, byteorder="big"))
-
+                f.write(int(rgb565).to_bytes(2, byteorder="little"))
 
 def main():
+    output_dir = "/home/barcode"
+    output_raw = os.path.join(output_dir, "image.raw")
+
+    if os.path.exists(output_raw):
+        print(f"[!] Barcode already exists at {output_raw}. Skipping generation.")
+        return
+
     if len(sys.argv) != 2:
         print("Usage: python3 barcode_generator.py <SERIAL_NUMBER>")
         sys.exit(1)
 
     serial_number = sys.argv[1]
-
-    # Output directory
-    output_dir = "/home/barcode"
     os.makedirs(output_dir, exist_ok=True)
 
-    output_png = os.path.join(output_dir, f"image.png")
-    output_raw = os.path.join(output_dir, f"image.raw")
+    output_png = os.path.join(output_dir, "image.png")
 
     print(f"[+] Generating barcode for: {serial_number}")
     generate_code39_barcode(serial_number, output_png)

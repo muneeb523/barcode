@@ -41,13 +41,13 @@ bool loadBarcodeImage(const char *path, uint16_t *buffer, size_t size)
 void drawUI()
 {
     uint16_t barcode[IMAGE_SIZE];
-    setColor(0, 0, 0); // Black background
+    setColor(255,255,255); // Black background
 
     if (loadBarcodeImage("/home/barcode/image.raw", barcode, IMAGE_SIZE))
     {
         std::cout << "Drawing barcode image...\n";
-        drawImage(0, 0, barcode, IMAGE_WIDTH, IMAGE_HEIGHT);
-        
+        drawImage(10, 10, barcode, IMAGE_WIDTH, IMAGE_HEIGHT);
+
         for (int i = 0; i < IMAGE_SIZE; ++i) {
             if (barcode[i] != 0xFFFF) {
                 std::cout << "Non-white pixel found at " << i << ": 0x" << std::hex << barcode[i] << std::endl;
@@ -73,4 +73,6 @@ int main()
     flushBuffer();
     drawUI();
     return 0;
+
+
 }
