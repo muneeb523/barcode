@@ -30,40 +30,39 @@ bool loadBarcodeImage(const char *path, uint16_t *buffer, size_t size)
     file.read(reinterpret_cast<char *>(buffer), size * sizeof(uint16_t));
     if (file.gcount() != static_cast<std::streamsize>(size * sizeof(uint16_t)))
     {
-        std::cerr << "Error: Failed to read the full barcode image data." << std::endl;
+        std::cerr << "Error: Failed to read full barcode image." << std::endl;
         return false;
     }
 
     return true;
 }
 
+
 void drawUI()
 {
     uint16_t barcode[IMAGE_SIZE];
     setColor(0, 0, 0); // Black background
 
-    if (loadBarcodeImage("/root/image.raw", barcode, IMAGE_SIZE))
+    if (loadBarcodeImage("/home/barcode/image.raw", barcode, IMAGE_SIZE))
     {
-        // Print the barcode array values
-        std::cout << "Barcode image data (in RGB565 format):\n";
-        for (int i = 0; i < IMAGE_SIZE; ++i)
-        {
-            // Print the value in hexadecimal format (RGB565)
-            std::cout << "0x" << std::hex << barcode[i] << " ";
-
-            // Optionally, print a newline every 16 values for readability
-            if ((i + 1) % 16 == 0)
-                std::cout << std::endl;
+        std::cout << "Drawing barcode image...\n";
+        drawImage(0, 0, barcode, IMAGE_WIDTH, IMAGE_HEIGHT);
+        
+        for (int i = 0; i < IMAGE_SIZE; ++i) {
+            if (barcode[i] != 0xFFFF) {
+                std::cout << "Non-white pixel found at " << i << ": 0x" << std::hex << barcode[i] << std::endl;
+                break;
+            }
         }
-        std::cout << std::dec << std::endl;  // Reset to decimal format for other prints
-
-        // Draw mode image at fixed position
-        drawImage(0, 0, barcode, 140, 60);
+        
+    }
+    else
+    {
+        std::cerr << "Failed to load barcode image.\n";
     }
 
     flushBuffer();
 }
-
 
 int main()
 {
