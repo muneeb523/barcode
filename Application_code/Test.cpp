@@ -1,6 +1,12 @@
 ﻿#include <stdint.h>
 #include <string.h>
 #include <iostream>
+#include <fstream>
+#include <vector>
+#include <cstdint>
+#define IMAGE_WIDTH 140
+#define IMAGE_HEIGHT 60
+#define IMAGE_SIZE (IMAGE_WIDTH * IMAGE_HEIGHT)
 extern "C"
 {
 #include "../appgpio.h"
@@ -12,14 +18,36 @@ extern "C"
 #include "../screen.h"
 }
 
+bool loadBarcodeImage(const char *path, uint16_t *buffer, size_t size)
+{
+    std::ifstream file(path, std::ios::binary);
+    if (!file.is_open())
+    {
+        std::cerr << "Failed to open barcode image file: " << path << std::endl;
+        return false;
+    }
+
+    file.read(reinterpret_cast<char *>(buffer), size * sizeof(uint16_t));
+    if (file.gcount() != static_cast<std::streamsize>(size * sizeof(uint16_t)))
+    {
+        std::cerr << "Error: Failed to read the full barcode image data." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 void drawUI()
 {
+
+    uint16_t barcode[IMAGE_SIZE];
     setColor(0, 0, 0); // Black background
 
-
-    // Draw mode image at fixed position
-    drawImage(0, 0, T001,140 ,60 );
-
+    if (loadBarcodeImage("/root/image.raw", barcode, IMAGE_SIZE))
+    {
+        // Draw mode image at fixed position
+        drawImage(0, 0, barcode, 140, 60);
+    }
     flushBuffer();
 }
 
@@ -31,6 +59,6 @@ int main()
     setOrientation(R180);
     fillScreen();
     flushBuffer();
-     drawUI();
+    drawUI();
     return 0;
 }
