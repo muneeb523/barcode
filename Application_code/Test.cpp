@@ -12,183 +12,17 @@ extern "C"
 #include "../screen.h"
 }
 
-/* Full Code 39 pattern table */
-const char *code39_patterns[] = {
-    "100010110", /* 0 */
-    "110010011", /* 1 */
-    "011010011", /* 2 */
-    "111010010", /* 3 */
-    "100110010", /* 4 */
-    "010110011", /* 5 */
-    "110110010", /* 6 */
-    "101100010", /* 7 */
-    "011100011", /* 8 */
-    "111100010", /* 9 */
-    "100011011", /* A */
-    "110011001", /* B */
-    "011011001", /* C */
-    "111011000", /* D */
-    "100111001", /* E */
-    "010111001", /* F */
-    "110111000", /* G */
-    "101101001", /* H */
-    "011101001", /* I */
-    "111101000", /* J */
-    "100011101", /* K */
-    "110011100", /* L */
-    "011011100", /* M */
-    "111011100", /* N */
-    "100111100", /* O */
-    "010111100", /* P */
-    "110111100", /* Q */
-    "101101100", /* R */
-    "011101100", /* S */
-    "111101100", /* T */
-    "100011110", /* U */
-    "110011110", /* V */
-    "011011110", /* W */
-    "111011110", /* X */
-    "100111110", /* Y */
-    "010111110", /* Z */
-    "101001101", /* - */
-    "011001101", /* . */
-    "110001101", /* Space */
-    "101100101", /* $ */
-    "101101001", /* / */
-    "100101101", /* + */
-    "110101001", /* % */
-    "101001110"  /* * */
-};
-
-/* Map input character to index in code39_patterns */
-int char_to_index(char c)
+void drawUI()
 {
-    if (c >= '0' && c <= '9')
-        return c - '0';
-    if (c >= 'A' && c <= 'Z')
-        return c - 'A' + 10;
-    switch (c)
-    {
-    case '-':
-        return 36;
-    case '.':
-        return 37;
-    case ' ':
-        return 38;
-    case '$':
-        return 39;
-    case '/':
-        return 40;
-    case '+':
-        return 41;
-    case '%':
-        return 42;
-    case '*':
-        return 43;
-    default:
-        return -1; /* Invalid character */
-    }
+    setColor(0, 0, 0); // Black background
+
+
+    // Draw mode image at fixed position
+    drawImage(0, 0, barcode,160 ,80 );
+
+    flushBuffer();
 }
 
-/* Calculate total barcode width in pixels */
-uint16_t calculate_barcode_width(const char *input, uint16_t narrow_width, uint16_t wide_width)
-{
-    uint16_t char_count = strlen(input);
-    /* Each character: 3 wide + 6 narrow + 1 narrow (gap) */
-    uint16_t char_width = (3 * wide_width + 6 * narrow_width + narrow_width);
-    /* Start/stop (*): 2 × (3 wide + 6 narrow) */
-    uint16_t start_stop_width = 2 * (3 * wide_width + 6 * narrow_width);
-    /* Quiet zones: 10 pixels left + 10 pixels right */
-    uint16_t quiet_zones = 20;
-    return start_stop_width + (char_count * char_width) + quiet_zones;
-}
-
-/* Render Code 39 barcode with overflow checking */
-int draw_code39_barcode(const char *input, uint16_t x_start, uint16_t y_start, uint16_t bar_height)
-{
-    /* Default barcode parameters */
-    uint16_t narrow_width = 2; /* Pixels for narrow bar/space */
-    uint16_t wide_width = 4;   /* Pixels for wide bar/space */
-
-    /* Validate input */
-    for (int i = 0; i < strlen(input); i++)
-    {
-        if (char_to_index(input[i]) < 0)
-        {
-            return -1; /* Invalid character */
-        }
-    }
-
-    /* Check for overflow */
-    uint16_t total_width = calculate_barcode_width(input, narrow_width, wide_width);
-    if (total_width + x_start > 160)
-    {
-    
-
-        /* Option 2: Scale down (uncomment to enable) */
-
-        narrow_width = 1;
-        wide_width = 2;
-        total_width = calculate_barcode_width(input, narrow_width, wide_width);
-        if (total_width + x_start > 160)
-        {
-            return -2; /* Still too wide, abort */
-        }
-    }
-
-    /* Set colors: black for bars, white for background */
-    setColor(255, 255, 255);         /* Black for bars */
-    setbgColor(0, 0, 0); /* White background */
-    fillScreen();              /* Clear screen to white */
-    printf("Done setting up things\n");
-    uint16_t x = x_start; /* Current x position */
-
-    /* Draw start character (*) */
-    const char *start_pattern = code39_patterns[43]; /* * */
-    for (int i = 0; i < 9; i++)
-    {
-        uint16_t width = (start_pattern[i] == '1') ? wide_width : narrow_width;
-        if (i % 2 == 0)
-        { /* Bar (even indices) */
-            drawRect(x, y_start, width, bar_height);
-        } /* Odd indices are spaces (skip) */
-        x += width;
-    }
-    x += narrow_width; /* Inter-character gap */
-
-    /* Encode each input character */
-    for (int i = 0; i < strlen(input); i++)
-    {
-        int idx = char_to_index(input[i]);
-        const char *pattern = code39_patterns[idx];
-        for (int j = 0; j < 9; j++)
-        {
-            uint16_t width = (pattern[j] == '1') ? wide_width : narrow_width;
-            if (j % 2 == 0)
-            { /* Bar */
-                drawRect(x, y_start, width, bar_height);
-            }
-            x += width;
-        }
-        x += narrow_width; /* Inter-character gap */
-    }
-
-    /* Draw stop character (*) */
-    for (int i = 0; i < 9; i++)
-    {
-        uint16_t width = (start_pattern[i] == '1') ? wide_width : narrow_width;
-        if (i % 2 == 0)
-        { /* Bar */
-            drawRect(x, y_start, width, bar_height);
-        }
-        x += width;
-    }
-
-  
-
-    flushBuffer(); /* Update display */
-    return 0;      /* Success */
-}
 
 int main()
 {
@@ -197,16 +31,6 @@ int main()
     setOrientation(R0);
     fillScreen();
     flushBuffer();
-    const char *data = "CODE39";
-    int result = draw_code39_barcode(data, 10, 10, 60); /* Start at (10,10), height=60 pixels */
-    if (result == -1)
-    {
-        std::cout << "failed here" << std::endl;
-    }
-    else if (result == -2)
-    {
-        std::cout << "FAiled here" << std::endl;
-    }
-    std::cout << "Return here" << std::endl;
+     drawUI();
     return 0;
 }
